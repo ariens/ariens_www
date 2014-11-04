@@ -1,0 +1,5 @@
+app.db
+db_repository
+.idea
+__pycache__
+python3.4
