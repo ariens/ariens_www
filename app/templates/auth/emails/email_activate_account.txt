@@ -5,5 +5,4 @@ Thanks for taking the time to register on my website.  Before you can login you 
 {{url_for('email_activation', confirmation_code = activation.activation_code, _external = True)}}
 
 Regards,
-
-Fourtitude Brewing Co.
+Dave Ariens
