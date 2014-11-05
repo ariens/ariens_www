@@ -37,4 +37,4 @@ def manage_article_object(object_class, object_id):
 @app.route('/article/delete/<object_class>/<int:object_id>', methods=['GET', 'POST'])
 @route_restrictions.restrict(group_name='article_admin')
 def delete_article_object(object_class, object_id):
-    return delete_object(get_article_registry(), object_class, object_id, 'article_admin')
+    return delete_object(get_article_registry(), object_class, object_id, 'list_articles')

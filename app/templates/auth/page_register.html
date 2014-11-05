@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<p>Using the below form you can create an accout that will allow you to login to this site.</p>
+<p>Using the below form you can create an account that will allow you to login to this site.</p>
 <form action="" method="post" name="register">
     {{form.hidden_tag()}}
     <p>
@@ -46,6 +46,6 @@
         <span style="color: red;">[{{error}}]</span>
         {% endfor %}<br>
 	</p>
-    <p><input type="submit" value="Sign In"></p>
+    <p><input type="submit" value="Register"></p>
 </form>
 {% endblock %}

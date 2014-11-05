@@ -187,6 +187,7 @@ def register():
 
             emails.send_user_email_activation(activation)
             flash("Please check your e-mail for activation instructions")
+            return redirect('login')
     return render_template(
         'auth/page_register.html',
         title='Register',
