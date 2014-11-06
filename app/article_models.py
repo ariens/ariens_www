@@ -1,4 +1,5 @@
 from app import db
+from app.user_models import User
 from datetime import datetime
 from flask import g
 
@@ -35,3 +36,14 @@ class Article(db.Model):
         if self.user_id is None:
             self.user_id = g.user.id
             self.user = g.user
+
+    def get_attachments(self):
+        return ArticleAttachment.query.filter_by(article_id=self.id)
+
+
+class ArticleAttachment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    article_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    content_type = db.Column(db.String(250))
+    file_name = db.Column(db.String(250))
+    thumb_name = db.Column(db.String(250))

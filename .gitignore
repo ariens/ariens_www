@@ -3,3 +3,4 @@ db_repository
 .idea
 __pycache__
 python3.4
+app/static/article_attachments/
