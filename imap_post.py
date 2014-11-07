@@ -6,7 +6,6 @@ import re
 import dkim
 from PIL import Image
 
-
 from html.parser import HTMLParser
 from datetime import datetime
 
@@ -75,6 +74,7 @@ def post_new_article(from_email, title, body, date):
     db.session.add(article)
     db.session.commit()
     print("*** successfully posted new article: id={} ***".format(article.id))
+
     return article
 
 

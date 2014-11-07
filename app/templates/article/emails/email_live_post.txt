@@ -1,0 +1,8 @@
+Dear <i>{{user.username}},
+
+Good news, you're post is live!  Copy paste the following link into a web browser to reset your password:
+
+{{url_for('article', _external = True)}}
+
+Regards,
+Dave Ariens
