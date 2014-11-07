@@ -1,0 +1,14 @@
+122,123c122,123
+< FWS = r'(?:(?:\s*\r?\n)?\s+)?'
+< RE_BTAG = re.compile(r'([;\s]b'+FWS+r'=)(?:'+FWS+r'[a-zA-Z0-9+/=])*(?:\r?\n\Z)?')
+---
+> FWS = b'(?:(?:\s*\r?\n)?\s+)?'
+> RE_BTAG = re.compile(b'([;\s]b' + FWS + b'=)(?:' + FWS + b'[a-zA-Z0-9+/=])*(?:\r?\n\Z)?')
+128c128
+<     sign_headers = select_headers(headers,include_headers)
+---
+>     sign_headers = select_headers(headers, include_headers)
+132c132
+<         [(sigheader[0], RE_BTAG.sub(b'\\1',sigheader[1]))])
+---
+>         [(sigheader[0], RE_BTAG.sub(b'\\1', sigheader[1]))])

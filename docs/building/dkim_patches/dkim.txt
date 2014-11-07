@@ -1,0 +1,14 @@
+When I tried using the DKIM package from pip against my python 3.4 distro a few wonky issues arose.
+
+Looks like it's dependancies on the DNS module (I used dnspython3) had string/bytes problems.
+
+I hacked a working version together by modifying the return in dnsplug.py get_txt() and some of the regular expressions in __init__.py that weren't bytes compatible.
+
+No idea what the proper solution should look like but this good enough for me
+
+Within the virtualenv, patch:
+
+python3.4/lib/python3.4/site-packages/dkim/dnsplug.py
+python3.4/lib/python3.4/site-packages/dkim/__init__.py 
+
+...with these and you should be gtg!

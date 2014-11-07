@@ -24,10 +24,12 @@ imap_host = 'mail.layerzero.ca'
 imap_user = 'debug@ariens.ca'
 imap_pass = os.environ['DEBUG_MAIL_PASSWORD']
 imap_box = 'Inbox'
-imap_readonly = True
-detach_dir = '/home/dave/www.ariens.ca/app/static/article_attachments'
+detach_dir = '/srv/http/www/flask_apps/ariens_www/app/static/article_attachments'
 allowed_publishers = ['dave@ariens.ca']
 verify_dkim = True
+imap_readonly = False
+
+basedir = os.path.abspath(os.path.dirname(__file__)) + '/app/static/article_attachments'
 
 
 class MLStripper(HTMLParser):

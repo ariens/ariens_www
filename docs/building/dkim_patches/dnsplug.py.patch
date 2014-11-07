@@ -1,0 +1,10 @@
+34c34
+<               return b"".join(r.items[0].strings)
+---
+>               return bytes("".join(r.items[0].strings), 'utf-8')
+83,84c83,84
+<     if txt:
+<       txt = txt.encode('utf-8')
+---
+>     #if txt:
+>       #txt = txt.encode('utf-8')
