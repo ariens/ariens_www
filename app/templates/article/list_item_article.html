@@ -7,15 +7,13 @@
         {% endif %}
     </h3>
     {{ article.body | safe }}
-	<br />
+	<br /><br />
+
     {% for attachment in article.get_attachments() %}
         {% if attachment.content_type == 'image' and attachment.thumb_name != '' %}
-            <br />
-			<p>
-                <a href="/static/article_attachments/{{ attachment.file_name }}">
-                    <img height="200" width="200" class="img-thumbnail" src="/static/article_attachments/{{ attachment.thumb_name }}">
-                </a>
-            </p>
+            <a href="/static/article_attachments/{{ attachment.file_name }}" style="margin-right: 20px; margin-bottom: 20px">
+                <img height="200" width="200" class="img-thumbnail" src="/static/article_attachments/{{ attachment.thumb_name }}">
+            </a>
         {% endif %}
     {% endfor %}
     <hr>
