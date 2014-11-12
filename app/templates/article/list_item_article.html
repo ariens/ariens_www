@@ -11,7 +11,7 @@
 
     {% for attachment in article.get_image_attachments() %}
         <a href="/static/article_attachments/{{ attachment.file_name }}" style="margin-right: 20px; margin-bottom: 20px">
-            <img class="img-thumbnail" src="/static/article_attachments/{{ attachment.thumb_name }}">
+            <img style="margin-bottom: 20px;" class="img-thumbnail" src="/static/article_attachments/{{ attachment.thumb_name }}">
         </a>
     {% endfor %}
     <hr>
