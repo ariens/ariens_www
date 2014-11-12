@@ -1,6 +1,7 @@
 from flask import render_template, request, flash, redirect, url_for
 from app import db
 from app.user_forms import ConfirmForm
+from inspect import ismethod
 
 
 class ManagedObjectException(Exception):
@@ -90,15 +91,17 @@ def delete_object(object_registry, object_class, object_id, next_url):
             raise Exception("Missing object_id")
         if request.method == 'POST':
             if request.form['action'] == 'Cancel':
-                return redirect(url_for('beer_admin'))
+                return redirect(url_for(next_url))
             if request.form['action'] == 'Confirm':
-                if managed_obj.foreign_key_protected():
-                    db.session.delete(managed_obj)
-                    db.session.commit()
-                    flash("%s is gone" % managed_obj)
-                    return redirect(url_for(next_url))
+                if not managed_obj.foreign_key_protected():
+                    raise Exception("The object you are trying to delete had foreign_key_protected() return False")
+                if ismethod(managed_obj.delete):
+                   managed_obj.delete()
                 else:
-                    flash("We can't delete that because there are related records")
+                    db.session.delete(managed_obj)
+                db.session.commit()
+                flash("%s is gone" % managed_obj)
+                return redirect(url_for(next_url))
 
     except Exception as error:
         flash(error)

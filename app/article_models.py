@@ -37,8 +37,20 @@ class Article(db.Model):
             self.user_id = g.user.id
             self.user = g.user
 
-    def get_attachments(self):
-        return ArticleAttachment.query.filter_by(article_id=self.id)
+    def get_image_attachments(self):
+        return ArticleImageAttachment.query.filter_by(article_id=self.id)
+
+    def delete(self):
+        for attachment in self.get_image_attachments():
+            db.session.delete(attachment)
+        db.session.delete(self)
+
+
+class ArticleImageAttachment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    article_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    file_name = db.Column(db.String(250))
+    thumb_name = db.Column(db.String(250))
 
 
 class ArticleAttachment(db.Model):

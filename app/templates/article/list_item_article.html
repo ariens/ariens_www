@@ -9,12 +9,10 @@
     {{ article.body | safe }}
 	<br /><br />
 
-    {% for attachment in article.get_attachments() %}
-        {% if attachment.content_type == 'image' and attachment.thumb_name != '' %}
-            <a href="/static/article_attachments/{{ attachment.file_name }}" style="margin-right: 20px; margin-bottom: 20px">
-                <img style="height: 200px; width: 200px" class="img-thumbnail" src="/static/article_attachments/{{ attachment.thumb_name }}">
-            </a>
-        {% endif %}
+    {% for attachment in article.get_image_attachments() %}
+        <a href="/static/article_attachments/{{ attachment.file_name }}" style="margin-right: 20px; margin-bottom: 20px">
+            <img class="img-thumbnail" src="/static/article_attachments/{{ attachment.thumb_name }}">
+        </a>
     {% endfor %}
     <hr>
 </p>
