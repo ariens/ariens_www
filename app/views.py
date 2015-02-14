@@ -3,6 +3,7 @@ from flask_login import current_user
 from app import lm, app
 from app import user_models
 
+
 @lm.user_loader
 def load_user(user_id):
     return user_models.User.query.get(int(user_id))
@@ -15,12 +16,7 @@ def before_request():
 
 @app.route('/')
 def index():
-    user = g.user
     return redirect(url_for("list_articles"))
-    return render_template(
-        "home/page.html",
-        title="Home",
-        user=user)
 
 
 @app.errorhandler(403)

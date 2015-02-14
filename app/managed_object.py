@@ -61,10 +61,10 @@ def manage_object(object_registry, object_class, object_id, next_url):
                 managed_obj.form_populate_helper()
             db.session.add(managed_obj)
             db.session.commit()
-            flash("Object: '%s' Saved!" % managed_obj.get_auto_manage_label())
+            flash("Object: '%s' Saved!" % managed_obj.get_auto_manage_label(), category="success")
             return redirect(url_for(next_url))
     except Exception as error:
-        flash(error)
+        flash(error, category="danger")
     return render_template(
         ManagedClass.manage_template(),
         title="%s %s" % (verb, managed_obj.get_auto_manage_label()),
@@ -100,11 +100,11 @@ def delete_object(object_registry, object_class, object_id, next_url):
                 else:
                     db.session.delete(managed_obj)
                 db.session.commit()
-                flash("%s is gone" % managed_obj)
+                flash("%s is gone" % managed_obj, category="success")
                 return redirect(url_for(next_url))
 
     except Exception as error:
-        flash(error)
+        flash(error, category="danger")
     return render_template(
         ManagedClass.delete_template(),
         form=form,

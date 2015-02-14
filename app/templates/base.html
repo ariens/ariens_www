@@ -44,16 +44,20 @@
         </div>
     </div>
 	<div class="container">
-        <h1>{{title}}</h1>
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-        <ul>
-        {% for message in messages %}
-            <li>{{ message }} </li>
-        {% endfor %}
-        </ul>
+            <br />
+            {% for category, message in messages %}
+                {% if not category %}
+                    <div class="alert alert-danger" role="alert">{{ message }}</div>
+                {% else %}
+                    <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+            </ul>
         {% endif %}
         {% endwith %}
+        <h1>{{title}}</h1>
         <hr>
         {% block content %}{% endblock %}
     </div>

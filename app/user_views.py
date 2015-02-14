@@ -41,12 +41,12 @@ def password_reset():
             db.session.add(user)
             EmailActivation.activate(activation.activation_code)
             db.session.commit()
-            flash("Your password has been reset, please remember to login with your new password")
+            flash("Your password has been reset, please remember to login with your new password", category="success")
             return redirect(url_for('login'))
     except PasswordResetException as error:
-        flash(error)
+        flash(error, category="danger")
     except EmailActivationException as error:
-        flash(error)
+        flash(error, category="danger")
     return render_template(
         'auth/page_password_reset.html',
         problem=problem,
@@ -80,9 +80,9 @@ def request_password_reset():
             db.session.add(new_activation)
             db.session.commit()
             emails.send_reset_password_activation(new_activation)
-            flash("Check your e-mail, we sent the password reset request to " + email.email_address)
+            flash("Check your e-mail, we sent the password reset request to " + email.email_address, category="info")
         except RequestPasswordResetException as error:
-            flash(error)
+            flash(error, category="danger")
     return render_template(
         'auth/page_request_password_reset.html',
         problem=problem,
@@ -101,10 +101,10 @@ def email_activation():
         email_address.confirmed = True
         db.session.add(email_address)
         db.session.commit()
-        flash("E-mail address " + email_address.email_address + " activated, you may now login")
+        flash("E-mail address " + email_address.email_address + " activated, you may now login", category="success")
         return redirect(url_for('login'))
     except EmailActivationException as err:
-        flash("Error activating that e-mail address: {0}".format(err))
+        flash("Error activating that e-mail address: {0}".format(err), category="danger")
     return render_template(
         'auth/page_activate.html',
         title='Activate Your Account')
@@ -137,10 +137,10 @@ def send_activation():
             emails.send_user_email_activation(new_activation)
             db.session.add(new_activation)
             db.session.commit()
-            flash("Check your e-mail, we sent a new activation code to " + email.email_address)
+            flash("Check your e-mail, we sent a new activation code to " + email.email_address, category="info")
             #TODO add a generic activation template here.
         except SendActivationException as error:
-            flash(error)
+            flash(error, category="danger")
     return render_template(
         'auth/page_send_activation.html',
         problem=problem,
@@ -156,9 +156,9 @@ def register():
         email_address = UserEmailAddress.query.filter_by(email_address=form.email.data).first()
         username = User.query.filter_by(username=form.username.data).first()
         if username is not None:
-            flash("The username \"" + form.username.data + "\" is already taken")
+            flash("The username ({0}) is already taken".format(form.username.data), category="danger")
         elif email_address is not None:
-            flash("That e-mail address has already been registered on this site")
+            flash("That e-mail address has already been registered on this site", category="danger")
         else:
             new_user = User(
                 username=form.username.data,
@@ -186,7 +186,7 @@ def register():
             db.session.commit()
 
             emails.send_user_email_activation(activation)
-            flash("Please check your e-mail for activation instructions")
+            flash("Please check your e-mail for activation instructions", category="info")
             return redirect('login')
     return render_template(
         'auth/page_register.html',
@@ -235,9 +235,10 @@ def login():
             user.last_login = datetime.utcnow()
             db.session.add(user)
             db.session.commit()
+            flash("You are now logged in, welcome back {}".format(user.username), category="success")
             return redirect(request.args.get('next') or url_for('index'))
     except LoginException as error:
-        flash(error)
+        flash(error, category="danger")
     return render_template(
         'auth/page_login.html',
         problem=problem,
