@@ -271,6 +271,7 @@ def oauth_callback(provider):
         user.last_login = datetime.utcnow()
         db.session.add(user)
         db.session.commit()
+        flask_login.login_user(user, remember=False)
         flash("You are now logged in, welcome back {}".format(user.username), category="success")
 
     # We didn't find an existing user with that social ID
@@ -279,7 +280,6 @@ def oauth_callback(provider):
         user_email = UserEmailAddress.query.filter_by(email_address=email).first()
         if user_email is not None:
             user = User.query.filter_by(id=user_email.user_id).first()
-            flask_login.login_user(user, remember=False)
             # Add the social ID so we don't have to go through an email lookup next time.
             user.social_id = social_id
             user.last_login = datetime.utcnow()
@@ -288,6 +288,7 @@ def oauth_callback(provider):
             flash("You are now logged in, welcome back {}".format(user.username), category="success")
             flash("Note: the email address {} is now linked to the {} account with ID {}"
                   .format(email, provider, social_id), category="info")
+            flask_login.login_user(user, remember=False)
 
         # There was no user with that social ID or email
         # so we need to create a new user with an email account
@@ -302,6 +303,8 @@ def oauth_callback(provider):
             new_email.user_id = new_user.id
             db.session.add(new_email)
             db.session.commit()
+            flask_login.login_user(new_user, remember=False)
+            flash("You are now logged in new {} account linked to {}".format(provider, user.username), category="success")
 
     # We didn't find an existing user with that social ID and
     # the provider did not return an email address, so we're
@@ -310,6 +313,7 @@ def oauth_callback(provider):
         new_user = User(social_id=social_id, username=username, last_login=datetime.utcnow())
         db.session.add(new_user)
         db.session.commit()
+		flask_login.login_user(new_user, remember=False)
         flash("New account created and logged in via your {} account, welcome {}".format(provider, new_user.username),
               category="success")
 
