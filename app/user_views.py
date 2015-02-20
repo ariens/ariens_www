@@ -313,7 +313,7 @@ def oauth_callback(provider):
         new_user = User(social_id=social_id, username=username, last_login=datetime.utcnow())
         db.session.add(new_user)
         db.session.commit()
-		flask_login.login_user(new_user, remember=False)
+        flask_login.login_user(new_user, remember=False)
         flash("New account created and logged in via your {} account, welcome {}".format(provider, new_user.username),
               category="success")
 
