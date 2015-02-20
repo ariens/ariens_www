@@ -1,12 +1,14 @@
 from datetime import datetime
-from flask import session, g
+from flask import session, g, jsonify
 import flask_login
+from flask_login import current_user
 from flask_login import logout_user
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db, crypto
 from app.user_models import User, UserEmailAddress, EmailActivation, EmailActivationException
 from app.user_forms import LoginForm, PasswordResetForm, EmailOnlyForm, RegisterForm
 from . import emails
+from . import auth_models
 
 
 class PasswordResetException(Exception):
@@ -244,3 +246,71 @@ def login():
         problem=problem,
         title='Login',
         form=form)
+
+
+@app.route('/authorize/<provider>')
+def oauth_authorize(provider):
+    if not current_user.is_anonymous():
+        return redirect(url_for('index'))
+    oauth = auth_models.OAuthSignIn.get_provider(provider)
+    return oauth.authorize()
+
+
+@app.route('/callback/<provider>')
+def oauth_callback(provider):
+    if not current_user.is_anonymous():
+        return redirect(url_for('index'))
+    oauth = auth_models.OAuthSignIn.get_provider(provider)
+    social_id, username, email = oauth.callback()
+    if social_id is None:
+        flash('Authentication failed.')
+        return redirect(url_for('login'))
+    user = User.query.filter_by(social_id=social_id).first()
+
+    if user is not None:
+        user.last_login = datetime.utcnow()
+        db.session.add(user)
+        db.session.commit()
+        flash("You are now logged in, welcome back {}".format(user.username), category="success")
+
+    # We didn't find an existing user with that social ID
+    # but the provider returns an email address, check that...
+    elif not user and email is not None:
+        user_email = UserEmailAddress.query.filter_by(email_address=email).first()
+        if user_email is not None:
+            user = User.query.filter_by(id=user_email.user_id).first()
+            flask_login.login_user(user, remember=False)
+            # Add the social ID so we don't have to go through an email lookup next time.
+            user.social_id = social_id
+            user.last_login = datetime.utcnow()
+            db.session.add(user)
+            db.session.commit()
+            flash("You are now logged in, welcome back {}".format(user.username), category="success")
+            flash("Note: the email address {} is now linked to the {} account with ID {}"
+                  .format(email, provider, social_id), category="info")
+
+        # There was no user with that social ID or email
+        # so we need to create a new user with an email account
+        else:
+            new_email = UserEmailAddress(email_address=email, activated=True)
+            db.session.add(user_email)
+            db.session.commit()
+            new_user = User(social_id=social_id, primary_email_id=new_email.id, username=username,
+                            last_login=datetime.utcnow())
+            db.session.add(new_user)
+            db.session.commit()
+            new_email.user_id = new_user.id
+            db.session.add(new_email)
+            db.session.commit()
+
+    # We didn't find an existing user with that social ID and
+    # the provider did not return an email address, so we're
+    # creating a new user without an email account associated
+    elif not user:
+        new_user = User(social_id=social_id, username=username, last_login=datetime.utcnow())
+        db.session.add(new_user)
+        db.session.commit()
+        flash("New account created and logged in via your {} account, welcome {}".format(provider, new_user.username),
+              category="success")
+
+    return redirect(url_for('index'))

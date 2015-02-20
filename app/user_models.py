@@ -1,12 +1,16 @@
-from app import db
+from app import db, lm
 from config import ACTIVATION_CODE_VALID_FOR_SECONDS
+from flask.ext.login import LoginManager, UserMixin
+
+
 import string
 import random
 from datetime import timedelta, datetime
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    social_id = db.Column(db.String(64), unique=True)
     username = db.Column(db.String(64), unique=True)
     first_name = db.Column(db.String(35))
     last_name = db.Column(db.String(35))
@@ -49,6 +53,11 @@ class User(db.Model):
 
     def get_id(self):
         return self.id
+
+
+@lm.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 class UserEmailAddress(db.Model):

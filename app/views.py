@@ -1,12 +1,6 @@
 from flask import render_template, g, redirect, url_for
 from flask_login import current_user
-from app import lm, app
-from app import user_models
-
-
-@lm.user_loader
-def load_user(user_id):
-    return user_models.User.query.get(int(user_id))
+from app import app
 
 
 @app.before_request

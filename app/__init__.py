@@ -5,9 +5,11 @@ from flask.ext.mail import Mail
 
 app = Flask(__name__)
 app.config.from_object('config')
+app.config.from_envvar('APP_SETTINGS')
+
 db = SQLAlchemy(app)
-lm = LoginManager()
-lm.init_app(app)
+lm = LoginManager(app)
+#lm.init_app(app)
 lm.login_view = 'login'
 mail = Mail(app)
 
