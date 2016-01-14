@@ -137,6 +137,7 @@ def send_activation():
             new_activation = EmailActivation(user_id=user.id, email_address_id=email.id)
             db.session.add(new_activation)
             emails.send_user_email_activation(new_activation)
+            print("after send")
             db.session.add(new_activation)
             db.session.commit()
             flash("Check your e-mail, we sent a new activation code to " + email.email_address, category="info")
@@ -210,7 +211,7 @@ class LoginException(Exception):
 def login():
     problem = None
     form = LoginForm()
-    if g.user is not None and g.user.is_authenticated():
+    if g.user is not None and g.user.is_authenticated is True:
         return redirect(url_for('index'))
     try:
         if form.validate_on_submit():
@@ -250,7 +251,7 @@ def login():
 
 @app.route('/authorize/<provider>')
 def oauth_authorize(provider):
-    if not current_user.is_anonymous():
+    if not current_user.is_anonymous:
         return redirect(url_for('index'))
     oauth = auth_models.OAuthSignIn.get_provider(provider)
     return oauth.authorize()
@@ -258,7 +259,7 @@ def oauth_authorize(provider):
 
 @app.route('/callback/<provider>')
 def oauth_callback(provider):
-    if not current_user.is_anonymous():
+    if not current_user.is_anonymous:
         return redirect(url_for('index'))
     oauth = auth_models.OAuthSignIn.get_provider(provider)
     social_id, username, email = oauth.callback()

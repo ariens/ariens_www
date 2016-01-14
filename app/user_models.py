@@ -19,6 +19,9 @@ class User(UserMixin, db.Model):
     self_deleted = db.Column(db.Boolean, default=False)
     admin_disabled = db.Column(db.Boolean, default=False)
     last_login = db.Column(db.DateTime)
+    is_authenticated = True
+    is_anonymous = False
+    is_active = True
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -31,25 +34,18 @@ class User(UserMixin, db.Model):
         db.session.add(users_membership)
         db.session.commit()
 
-    @staticmethod
-    def is_authenticated():
-        return True
-
     #TODO: is_active needs a re-write, doesn't make sense now that the user_email_addresses table exists
-    def is_active(self):
-        if EmailActivation.query.filter_by(user_id=self.id, activated=True).first() is None:
-            return False
-        return True
+    #@property
+    #def is_active(self):
+    #    if EmailActivation.query.filter_by(user_id=self.id, activated=True).first() is None:
+    #        return False
+    #    return True
 
     def email_activated(self):
         if EmailActivation.query.filter_by(user_id=self.id).first() is None:
                 return True
         else:
                 return False
-
-    @staticmethod
-    def is_anonymous():
-        return False
 
     def get_id(self):
         return self.id
